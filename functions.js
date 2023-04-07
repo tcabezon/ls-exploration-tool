@@ -47,7 +47,7 @@ function init() {
 
     // texture
     var loader = new THREE.TextureLoader();
-    var grid = 'grid_50_reversed.png';
+    var grid = 'grid_50_reversed_0.png';
     photoMaterial = new THREE.MeshLambertMaterial({
         map: loader.load(grid), transparent: true,
         opacity: 1
@@ -77,7 +77,7 @@ function init() {
     var imagePositions
 
     var loader = new THREE.FileLoader();
-    loader.load('image_tsne_projections.json', function (data) {
+    loader.load('image_tsne_projections_0.json', function (data) {
         imagePositions = JSON.parse(data);
         useData(imagePositions)
     })
