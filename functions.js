@@ -1,6 +1,7 @@
 // from: https://douglasduhaime.com/posts/visualizing-tsne-maps-with-three-js.html
 
-var chosen = [3, 4, 49, 57, 94, 115, 131, 166, 206, 213]
+var chosen = [94, 115, 131, 213]//[3, 4, 49, 57, 94, 115, 131, 166, 206, 213]
+var mySelection = []
 let camera, scene, renderer, controls;
 
 var raycaster = new THREE.Raycaster();
@@ -17,12 +18,12 @@ function init() {
     // $("#myDiv").width(window.innerWidth)
     $("#myDiv").height(window.innerHeight)
     scene = new THREE.Scene();
-    scene.background = new THREE.Color("rgb(23, 24, 25)");
+    scene.background = new THREE.Color("rgb(0, 0, 0)");
     var fieldOfView = 75;
     var nearPlane = 0.1;
     var farPlane = 1000;
     var aspectRatio = myDiv.offsetWidth / myDiv.offsetHeight;
-    
+
 
 
     camera = new THREE.PerspectiveCamera(
@@ -66,7 +67,7 @@ function init() {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    
+
 
 
     var atlas = { width: 5000, height: 5000, cols: 16, rows: 16 };
@@ -180,7 +181,7 @@ function init() {
         plane_chosen = new THREE.Mesh(geometry_chosen, photoMaterial_chosen);
         scene.add(plane_chosen);
 
-        
+
 
     }
 
@@ -195,8 +196,8 @@ function init() {
     geometry = new THREE.PlaneGeometry(imageSize.width, imageSize.height);
     material = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true });
     line = new THREE.Mesh(geometry, material);
-    line.visible=false
-    console.log('line',line)
+    line.visible = false
+    console.log('line', line)
     scene.add(line);
 
     controls = new THREE.TrackballControls(camera, renderer.domElement);
@@ -212,15 +213,12 @@ function init() {
 }
 
 window.addEventListener('resize', function () {
-    camera.aspect = myDiv.offsetWidth / myDiv.offsetHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(myDiv.offsetWidth, myDiv.offsetHeight);
-    controls.handleResize();
+    handleResize()
 });
 
 function animate() {
     requestAnimationFrame(animate);
-    
+
     render();
     // 
     controls.update();
@@ -228,13 +226,57 @@ function animate() {
 }
 
 function buttonClicked() {
-    console.log('button clicked')
-    if (photoMaterial.opacity == 1) {
+    console.log('interpolation Button clicked')
+    updatePage()
+
+}
+
+function updatePage() {
+    console.log($('#myDiv').attr('class'))
+    if ($('#myDiv').attr('class') == 'tsne') {
+        console.log('accessing interpolation tool')
         photoMaterial.opacity = 0.2
+        $('#myDiv').css('width', '66%')
+        $('#myTools').show()
+        $('#myDiv').addClass('interpolation')
+        $('#myDiv').removeClass('tsne')
+        $('#myButton').text('Close')
+        $('#myButton').css('right', '35%')
+        $('#square').append("<div class='m-0 p-0 h-50 ' id='img1'></div><div class='m-0 p-0 h-50' id='img2'></div><div class='m-0 p-0 h-50' id='img3'></div><div class='m-0 p-0 h-50' id='img4'></div>")
+
+        handleResize()
+
+        // chair hover when mouse over
+        document.addEventListener('mousemove', onPointerMove);
+        // pick chair when mouse click
+        document.addEventListener('pointerdown', onPointerDown);
     }
     else {
+        console.log('closing interpolation tool')
         photoMaterial.opacity = 1
+        $('#myDiv').css('width', '100%')
+        $('#myTools').hide()
+        $('#myDiv').addClass('tsne')
+        $('#myDiv').removeClass('interpolation')
+        $('#myButton').text('Interpolation tool')
+        $('#myButton').css('right', '5%')
+        $('#square').children().remove()
+        mySelection = []
+        handleResize()
+        // chair hover when mouse over
+        document.removeEventListener('mousemove', onPointerMove);
+        // pick chair when mouse click
+        document.removeEventListener('pointerdown', onPointerDown);
     }
+
+
+}
+
+function handleResize() {
+    camera.aspect = myDiv.offsetWidth / myDiv.offsetHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(myDiv.offsetWidth, myDiv.offsetHeight);
+    controls.handleResize();
 }
 
 
@@ -250,16 +292,12 @@ function buttonClicked() {
 let INTERSECTED;
 const pointer = new THREE.Vector2();
 
-// chair hover when mouse over
-document.addEventListener('mousemove', onPointerMove);
 
-// pick chair when mouse click
-document.addEventListener( 'pointerdown', onPointerDown );
 
 function onPointerMove(event) {
 
-    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    pointer.x = (event.clientX / myDiv.offsetWidth) * 2 - 1;
+    pointer.y = - (event.clientY / myDiv.offsetHeight) * 2 + 1;
 
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObject(plane_chosen);
@@ -273,10 +311,10 @@ function onPointerMove(event) {
         const linePosition = line.geometry.attributes.position;
         const meshPosition = plane_chosen.geometry.attributes.position;
         // console.log('meshposition',meshPosition)
-        let positionx= meshPosition.array[face.a*3]+imageSize.width/2
-        let positiony= meshPosition.array[face.a*3+1]+imageSize.height/2
+        let positionx = meshPosition.array[face.a * 3] + imageSize.width / 2
+        let positiony = meshPosition.array[face.a * 3 + 1] + imageSize.height / 2
 
-        line.position.set(positionx,positiony,0)
+        line.position.set(positionx, positiony, 0)
         line.visible = true;
 
 
@@ -290,26 +328,50 @@ function onPointerMove(event) {
 
 }
 
+function addSelection(n) {
+
+    if (mySelection.length < 4) {
+        if (mySelection.includes(n)) {
+            console.log('chair already selected')
+        }
+        else {
+            mySelection.push(n)
+            let selectionIndex = mySelection.length
+            let myImg = '#img' + selectionIndex
+            $(myImg).append("<img id='my_img' class='img-thumbnail bg-black border-dark border ' src='screenshots/" + mySelection[selectionIndex - 1] + ".png'>")
+            if (mySelection.length == 4) {
+                addInterpolationGrid()
+            }
+        }
+    }
+}
+
+function addInterpolationGrid() {
+    $('#square').children().remove()
+    mySelection.sort()
+    let gridName= "grid_elem_" + chosen.join("_") + "_.jpg";
+    console.log(gridName)
+    setTimeout($('#square').append("<img id='my_img' class='img-thumbnail bg-black border-dark border m-0 col-12 p-0' src='interpolation/"+gridName+"'></img>"), 1000);
+}
+
 function onPointerDown(event) {
-
-    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
-
+    pointer.x = (event.clientX / myDiv.offsetWidth) * 2 - 1;
+    pointer.y = - (event.clientY / myDiv.offsetHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObject(plane_chosen);
 
-
     if (intersects.length > 0) {
-        
+
         const intersect = intersects[0];
         // console.log(intersect)
         const face = intersect.face;
-        const elemIndex=chosen[Math.floor(intersect.faceIndex/2)];
+        const elemIndex = chosen[Math.floor(intersect.faceIndex / 2)];
+        console.log('element', elemIndex, 'cliked!')
+        addSelection(elemIndex)
+
+        // console.log('mySelection', mySelection)
 
 
-        console.log('element',elemIndex,'cliked!')
-        // line.visible = true;
-        
 
     } else {
 
@@ -322,8 +384,6 @@ function onPointerDown(event) {
 }
 
 function render() {
-    
-   
 
     renderer.render(scene, camera);
 

@@ -29,19 +29,61 @@
     <!-- CSS -->
     <link href="styles.css" rel="stylesheet" type="text/css">
 
+    <style>
+        section {
+
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+
+        }
+
+        .grid {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    </style>
+
 </head>
 
-<body >
+<body>
 
     <h1 style="position: absolute;margin: 5%;color: white;">Surfing the latent space</h1>
-    <button type='button' id='close_button'
-            style=" position: absolute; bottom: 5%;right: 5%;"
-            class='btn btn-outline-light rounded m-1" ' onclick="buttonClicked()">Button</button>
-    <div class="bg-danger m-0 p-0 row" style="width: 100%;">
-        
-        <div class="col-12 m-0 p-0" id="myDiv"></div>
-        <div class="col-3 bg-warning m-0 p-0">
-            <p></p>
+    <button type='button' id='myButton' style=" position: absolute; bottom: 5%;right: 5%;"
+        class='btn btn-outline-light rounded m-1" ' onclick="buttonClicked()">Interpolation tool</button>
+    <div class=" m-0 p-0 row" style="width: 100%;">
+        <!-- tsne -->
+        <div id="myDiv" style="width:100%" class="tsne"></div>
+
+        <!-- tools -->
+        <div class="m-0 p-0 row" id="myTools" style="width:34%">
+
+            <!-- img GRID -->
+            <div class=" h-50 m-0 p-0" id="gridDiv">
+
+                <section id='mySection'>
+                    <script></script>
+                    <div id="grid" class="bg-black">
+
+                        <div class="container row align-middle text-center row-cols-2 m-0 p-0 border border-white rounded"
+                            id="square">
+                            
+                        </div>
+                        <script>
+                            console.log('gridDiv', $('#myDiv').width(), $(document).height())
+                            $('#mySection').height($(document).height() / 2)
+                            let squareDim = Math.min($('#mySection').height(), $('#mySection').width()) * 0.9
+                            $('#square').height(squareDim)
+                            $('#square').width(squareDim)
+                        </script>
+                    </div>
+                </section>
+            </div>
+
+            <!--3D -->
+            <div class="col-12 h-50 d-inline-block bg-danger" id="myThree"> adios</div>
         </div>
     </div>
     <!-- THREE functions -->
