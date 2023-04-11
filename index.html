@@ -50,7 +50,13 @@
 
 <body>
 
-    <h1 style="position: absolute;margin: 5%;color: white;">Surfing the latent space</h1>
+    <div style="position: absolute;margin: 5%;color: white;">
+        <h1>Surfing the latent space</h1>
+        <span class="text-white p-1" id="text_div">-> Exploring tsne visualization </span>
+        <br>
+        <button style="display:none;" type='button' id='reset_button' class=' btn btn-outline-light rounded m-1'
+            onclick="reset_selection()">Reset selection TODO</button>
+    </div>
     <button type='button' id='myButton' style=" position: absolute; bottom: 5%;right: 5%;"
         class='btn btn-outline-light rounded m-1" ' onclick="buttonClicked()">Interpolation tool</button>
     <div class=" m-0 p-0 row" style="width: 100%;">
@@ -61,19 +67,17 @@
         <div class="m-0 p-0 row" id="myTools" style="width:34%">
 
             <!-- img GRID -->
-            <div class=" h-50 m-0 p-0" id="gridDiv">
+            <div class="m-0 p-0" id="ScreenshotDiv">
 
                 <section id='mySection'>
-                    <script></script>
                     <div id="grid" class="bg-black">
-
                         <div class="container row align-middle text-center row-cols-2 m-0 p-0 border border-white rounded"
                             id="square">
-                            
                         </div>
                         <script>
-                            console.log('gridDiv', $('#myDiv').width(), $(document).height())
-                            $('#mySection').height($(document).height() / 2)
+                            $('#ScreenshotDiv').height(window.innerHeight / 2)
+                            console.log('gridDiv', $('#myDiv').width(), $('#myDiv').height())
+                            $('#mySection').height(window.innerHeight / 2)
                             let squareDim = Math.min($('#mySection').height(), $('#mySection').width()) * 0.9
                             $('#square').height(squareDim)
                             $('#square').width(squareDim)
@@ -82,9 +86,55 @@
                 </section>
             </div>
 
-            <!--3D -->
-            <div class="col-12 h-50 d-inline-block bg-danger" id="myThree"> adios</div>
+            <!--model view -->
+            <div class="col-12 d-inline-block " id="modelView">
+
+                <!-- screenshot -->
+                <div class="container p-0 m-0 bg-danger" id="screenshot">
+                    <section id='myScreenshotSection'>
+                        <div id="screenshotGrid" class="">
+
+                            <div class="container row align-middle text-center m-0 p-0 border border-white rounded"
+                                id="screenshotSquare">
+
+                            </div>
+                            <script>
+                                // $("#screenshot").hide()
+                                $('#modelView').height(window.innerHeight / 2)
+                                console.log('screenshotDiv', $('#myDiv').width(), $('#myDiv').height())
+                                $('#myScreenshotSection').height(window.innerHeight / 2)
+                                squareDim = Math.min($('#myScreenshotSection').height(), $('#myScreenshotSection').width()) * 0.8
+                                $('#screenshotSquare').height(squareDim)
+                                $('#screenshotSquare').width(squareDim)
+                            </script>
+                        </div>
+                    </section>
+
+                </div>
+
+
+                <!-- 3D model -->
+                <div class="container p-0 m-0 bg-warning" id="3D_model">
+                    <div class="col-12 d-flex m-0 p-0 justify-content-end" id='close_button_div'>
+                        <button type='button' id='close_button' class=' btn btn-outline-light rounded m-1'
+                            onclick="close_3d()">Close 3D</button>
+                    </div>
+                    <div lass="col-12 m-0 p-0 bg-white" id="three_js">
+                    </div>
+                    
+                    <script>
+                        let filename = "interpolation/elem_94_115_131_213" + '_' + 0 + '_' + 0
+                        $("#3D_model").hide()
+                        $('#3D_model').height(window.innerHeight / 2)
+                        $("#three_js").height(($('#3D_model').height() - $('#close_button_div').height())*0.9 )
+                        // OBJViewer_Rotate(filename, "three_js")
+                        $("#myTools").hide()
+                    </script>
+
+                </div>
+            </div>
         </div>
+    </div>
     </div>
     <!-- THREE functions -->
     <script src="functions.js"></script>

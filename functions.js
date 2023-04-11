@@ -1,8 +1,9 @@
 // from: https://douglasduhaime.com/posts/visualizing-tsne-maps-with-three-js.html
 
-var chosen = [94, 115, 131, 213]//[3, 4, 49, 57, 94, 115, 131, 166, 206, 213]
+var chosen = [115, 131, 213, 94, 206]//[3, 4, 49, 57, 94, 115, 131, 166, 206, 213]
 var mySelection = []
 let camera, scene, renderer, controls;
+let grid_name
 
 var raycaster = new THREE.Raycaster();
 
@@ -235,14 +236,17 @@ function updatePage() {
     console.log($('#myDiv').attr('class'))
     if ($('#myDiv').attr('class') == 'tsne') {
         console.log('accessing interpolation tool')
-        photoMaterial.opacity = 0.2
+        photoMaterial.opacity = 0.3
+        $("#myTools").show()
+        $('#text_div').text(' -> Click 4 chair elements to interpolate')
+        $('#reset_button').show()
         $('#myDiv').css('width', '66%')
         $('#myTools').show()
         $('#myDiv').addClass('interpolation')
         $('#myDiv').removeClass('tsne')
-        $('#myButton').text('Close')
+        $('#myButton').text('Close interpolation')
         $('#myButton').css('right', '35%')
-        $('#square').append("<div class='m-0 p-0 h-50 ' id='img1'></div><div class='m-0 p-0 h-50' id='img2'></div><div class='m-0 p-0 h-50' id='img3'></div><div class='m-0 p-0 h-50' id='img4'></div>")
+        $('#square').prepend("<div class='m-0 p-0 h-50 ' id='img1'></div><div class='m-0 p-0 h-50' id='img2'></div><div class='m-0 p-0 h-50' id='img3'></div><div class='m-0 p-0 h-50' id='img4'></div>")
 
         handleResize()
 
@@ -254,6 +258,9 @@ function updatePage() {
     else {
         console.log('closing interpolation tool')
         photoMaterial.opacity = 1
+        $("#myTools").hide()
+        $('#text_div').text('-> Exploring tsne visualization  ')
+        $('#reset_button').hide()
         $('#myDiv').css('width', '100%')
         $('#myTools').hide()
         $('#myDiv').addClass('tsne')
@@ -267,6 +274,9 @@ function updatePage() {
         document.removeEventListener('mousemove', onPointerMove);
         // pick chair when mouse click
         document.removeEventListener('pointerdown', onPointerDown);
+        if($("#my_screenshot")){
+            $("#my_screenshot").attr("src", '');
+        }
     }
 
 
@@ -339,19 +349,86 @@ function addSelection(n) {
             let selectionIndex = mySelection.length
             let myImg = '#img' + selectionIndex
             $(myImg).append("<img id='my_img' class='img-thumbnail bg-black border-dark border ' src='screenshots/" + mySelection[selectionIndex - 1] + ".png'>")
-            if (mySelection.length == 4) {
-                addInterpolationGrid()
-            }
+
         }
+    }
+    if (mySelection.length == 4) {
+        addInterpolationGrid()
     }
 }
 
 function addInterpolationGrid() {
     $('#square').children().remove()
-    mySelection.sort()
-    let gridName= "grid_elem_" + chosen.join("_") + "_.jpg";
+    $('#text_div').text('-> Hover over grid to explore intermediate chairs. Click on a chair to get a 3D view of the model.  ')
+    console.log('myselection', mySelection)
+    mySelection = mySelection.sort(function (a, b) { return a - b })
+    console.log('myselection', mySelection)
+    let gridName = "grid_elem_" + mySelection.join("_") + "_.jpg";
     console.log(gridName)
-    setTimeout($('#square').append("<img id='my_img' class='img-thumbnail bg-black border-dark border m-0 col-12 p-0' src='interpolation/"+gridName+"'></img>"), 1000);
+    $('#square').append("<img id='my_img' class='img-thumbnail bg-black border-dark border m-0 col-12 p-0' src='interpolation/" + gridName + "'></img>").hide()
+    $('#square').fadeIn(500)
+
+    $('#square').mousemove(
+        function (event) {
+            myMouseEvent(event)
+        });
+    $('#square').click(function (event) {
+        myMouseClickEvent(event)
+    });
+}
+
+function close_3d() {
+    $('#screenshot').show()
+    $("#three_js").children().remove()
+    $("#3D_model").hide()
+    
+    $('#square').mousemove(
+        function (event) {
+            myMouseEvent(event)
+        });
+}
+
+function myMouseClickEvent(event) {
+    $("#square").off("mousemove");
+    $('#screenshot').hide()
+    var left = event.pageX - $('#square').offset().left;
+    var top = event.pageY - $('#square').offset().top;
+    // console.log(left, top);
+    let imgWidth = $('#square').width()
+
+    grid_x = Math.trunc((left / imgWidth) * 10)
+    grid_y = Math.trunc((top / imgWidth) * 10)
+    console.log('clicked at', grid_y, grid_x)
+    let elemName = "elem_" + mySelection.join("_")
+    let filename = "interpolation/"+elemName + '_' + grid_y + '_' + grid_x
+    // $("#explore").hide()
+    $("#3D_model").show()
+    OBJViewer_Rotate(filename, "three_js")
+}
+
+function myMouseEvent(event) {
+    $("#screenshotSquare").children().remove()
+    $("#screenshotSquare").append("<img id='my_screenshot' class='img-thumbnail bg-black' src=''>")
+    $("#3d_button").show()
+    var left = event.pageX - $('#square').offset().left;
+    var top = event.pageY - $('#square').offset().top;
+    let imgWidth = $('#square').width()
+    // console.log('imgWidth',imgWidth)
+
+    grid_x = Math.trunc((left / imgWidth) * 10)
+    grid_y = Math.trunc((top / imgWidth) * 10)
+
+
+    if (grid_name != (grid_y + ', ' + grid_x)) {
+        if (grid_x < 10 && grid_y < 10) {
+            grid_name = '_' + grid_y + '_' + grid_x
+            let elemName = "elem_" + mySelection.join("_")
+            img_name = "interpolation/screenshot/" + elemName + grid_name + ".jpg"
+            // $('#grid_name').text(grid_name + '.jpg')
+            $("#my_screenshot").attr("src", img_name);
+        }
+
+    }
 }
 
 function onPointerDown(event) {
