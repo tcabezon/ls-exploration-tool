@@ -259,7 +259,7 @@ function updatePage() {
         console.log('closing interpolation tool')
         photoMaterial.opacity = 1
         $("#myTools").hide()
-        $('#text_div').text('-> Exploring tsne visualization  ')
+        $('#text_div').text('-> Exploring tsne visualization. Click on interpolation tool for more.')
         $('#reset_button').hide()
         $('#myDiv').css('width', '100%')
         $('#myTools').hide()
