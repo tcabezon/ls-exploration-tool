@@ -403,6 +403,7 @@ function myMouseClickEvent(event) {
     let filename = "interpolation/"+elemName + '_' + grid_y + '_' + grid_x
     // $("#explore").hide()
     $("#3D_model").show()
+    $("#three_js").children().remove()
     OBJViewer_Rotate(filename, "three_js")
 }
 
