@@ -1,6 +1,6 @@
 // from: https://douglasduhaime.com/posts/visualizing-tsne-maps-with-three-js.html
 
-var chosen = [115, 131, 213, 94, 206]//[3, 4, 49, 57, 94, 115, 131, 166, 206, 213]
+var chosen = [115, 131, 213, 94, 206, 4]//[3, 4, 49, 57, 94, 115, 131, 166, 206, 213]
 var mySelection = []
 let camera, scene, renderer, controls;
 let grid_name
@@ -365,7 +365,7 @@ function addInterpolationGrid() {
     console.log('myselection', mySelection)
     let gridName = "grid_elem_" + mySelection.join("_") + "_.jpg";
     console.log(gridName)
-    $('#square').append("<img id='my_img' class='img-thumbnail bg-black border-dark border m-0 col-12 p-0' src='interpolation/" + gridName + "'></img>").hide()
+    $('#square').append("<img id='my_img' class='img-thumbnail bg-black border-dark border m-0 col-12 p-0' src='interpolation_/" + gridName + "'></img>").hide()
     $('#square').fadeIn(500)
 
     $('#square').mousemove(
@@ -400,7 +400,7 @@ function myMouseClickEvent(event) {
     grid_y = Math.trunc((top / imgWidth) * 10)
     console.log('clicked at', grid_y, grid_x)
     let elemName = "elem_" + mySelection.join("_")
-    let filename = "interpolation/"+elemName + '_' + grid_y + '_' + grid_x
+    let filename = "interpolation_/"+elemName + '_' + grid_y + '_' + grid_x
     // $("#explore").hide()
     $("#3D_model").show()
     $("#three_js").children().remove()
@@ -424,7 +424,7 @@ function myMouseEvent(event) {
         if (grid_x < 10 && grid_y < 10) {
             grid_name = '_' + grid_y + '_' + grid_x
             let elemName = "elem_" + mySelection.join("_")
-            img_name = "interpolation/screenshot/" + elemName + grid_name + ".jpg"
+            img_name = "interpolation_/screenshot/" + elemName + grid_name + ".jpg"
             // $('#grid_name').text(grid_name + '.jpg')
             $("#my_screenshot").attr("src", img_name);
         }
