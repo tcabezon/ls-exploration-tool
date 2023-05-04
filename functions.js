@@ -1,6 +1,6 @@
 // from: https://douglasduhaime.com/posts/visualizing-tsne-maps-with-three-js.html
 
-var chosen = [115, 131, 213, 94, 206, 4]//[3, 4, 49, 57, 94, 115, 131, 166, 206, 213]
+var chosen = [115, 131, 213, 94, 206]//[3, 4, 49, 57, 94, 115, 131, 166, 206, 213]
 var mySelection = []
 let camera, scene, renderer, controls;
 let grid_name
